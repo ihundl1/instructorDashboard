@@ -1,0 +1,54 @@
+---
+title: "showWork"
+author: "Isabella Hundley"
+date: "September 13, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F)
+library(tidyverse)
+library(knitr)
+library(scales)
+
+source("scratch.R")
+```
+
+What percent of in-class students have submitted each chunk?
+
+```{r}
+kable(submissions)
+ggplot(submissions, aes(x = chunk, y = percent / 100)) + geom_col(fill = 'steelblue') + 
+  scale_y_continuous(name = "", labels = percent) + 
+  scale_x_discrete(name = "Chunk Submitted") +
+  geom_text(aes(label = round(percent, 2)), vjust = -.3, size = 3.5) + 
+  ggtitle("In-Class Students that have Submitted a File") +
+  theme_minimal()
+```
+
+What percent of students who have submitted a chunk submitted it multiple times?
+
+```{r}
+kable(percMult)
+ggplot(percMult, aes(x=chunk, y=percent/100)) + geom_col(fill = 'steelblue') +
+  scale_y_continuous(name = "", labels = percent) + 
+  scale_x_discrete(name = "Chunks Submitted") + 
+  geom_text(aes(label=round(percent, 2)), vjust = -.3, size = 3.5) +
+  ggtitle("Students that have Re-Submitted a File") + 
+  theme_minimal()
+```
+
+What students have not submitted any files?
+```{r}
+noSubs$pawsid
+```
+
+How much daily activity do the pages get? (For this example, /syllabus and /tests)
+
+```{r}
+ggplot(plot, aes(x = a_date, y = n)) + geom_line(aes(color = a_pagePath)) +
+  scale_y_continuous(name = "Pageviews") +
+  scale_x_date(name = "Date") +
+  theme_minimal()
+```
+

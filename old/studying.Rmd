@@ -1,0 +1,84 @@
+---
+title: "ISDS 1102 Student Studying"
+author: "Isabella Hundley"
+date: "October 2, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(tidyverse)
+library(lubridate)
+library(RColorBrewer)
+
+source('studyTest.R')
+```
+
+```{r}
+# density plots
+densePlot(0) + ggtitle("Session Time Density", subtitle = "Min = 0")
+densePlot(5) + ggtitle("Session Time Density", subtitle = "Min = 5")
+densePlot(10) + ggtitle("Session Time Density", subtitle = "Min = 10")
+densePlot(15) + ggtitle("Session Time Density", subtitle = "Min = 15")
+densePlot(20) + ggtitle("Session Time Density", subtitle = "Min = 20") 
+```
+
+```{r}
+# in-class sections
+inClass = c('2018FA3', '2018FA4', '2018FA5', '2018FA6')
+#is <- is %>% filter(section %in% inClass)
+excel <- excel %>% filter(section %in% inClass)
+word <- word %>% filter(section %in% inClass)
+```
+
+
+##Information Systems Check-Ups & Studying
+```{r}
+# Checkup Values
+c1 <- interval('2018-08-24', '2018-09-07')
+c2 <- interval(int_end(c1), '2018-09-21')
+c3 <- interval(int_end(c2), '2018-10-05')
+c4 <- interval(int_end(c3), '2018-10-19')
+c5 <- interval(int_end(c4), '2018-11-09')
+c6 <- interval(int_end(c5),'2018-11-28')
+
+# graphs
+is %>% filter(topic != isTopics[1]) %>% createPlot() + dateLimits(c1) + 
+  ggtitle('Syllabus and Organized Computing', subtitle = c1) + 
+  geom_vline(xintercept = as.Date("2018-09-03"))
+is %>% filter(topic != isTopics[1]) %>% createPlot() + dateLimits(c2) + 
+  ggtitle("Intro to IS & Cybersecurity Foundations", subtitle = c2) +
+  geom_vline(xintercept = as.Date("2018-09-17"))
+is %>% filter(topic != isTopics[1]) %>% createPlot() + dateLimits(c3) + 
+  ggtitle("Hardware Foundations", subtitle = c3) +
+  geom_vline(xintercept = as.Date("2018-10-01"))
+is %>% filter(topic != isTopics[1]) %>% createPlot() + dateLimits(c4) + 
+  ggtitle("Software Foundations", subtitle = c4) +
+  geom_vline(xintercept = as.Date("2018-10-15"))
+#is %>% filter(topic != isTopics[1]) %>% createPlot() + dateLimits(c5)
+#is %>% filter(topic != isTopics[1]) %>% createPlot() + dateLimits(c6)
+```
+
+##Excel
+```{r}
+# exam values
+e1 <- interval('2018-09-14', '2018-09-28')
+e2 <- interval('2018-10-12', '2018-10-26')
+
+# graphs
+excel %>% filter(topic != excelTopics[1]) %>% createPlot() + ggtitle("Excel Topics")
+excel %>% filter(topic != excelTopics[1]) %>% createPlot() + ggtitle("Exam 1") +
+  dateLimits(e1) + geom_vline(xintercept = as.Date('2018-09-24'))
+#excel %>% filter(topic != excelTopics[1]) %>% createPlot() + ggtitle("Exam 2") +
+#  dateLimits(e2) + geom_vline(xintercept = as.Date('2018-10-22'))
+```
+
+```{r}
+excel %>% filter(t2 != "Other") %>% filter(a_eventCategory == 'Page Visibility', a_minutes >= 5) %>%
+  distinct(a_userId, t2, a_date) %>% count(t2, a_date) %>%
+  ggplot(aes(x = a_date, y = n, color = t2)) + geom_line() +
+  theme_minimal() + labs(x = "Date", y = "Students Studying") +
+  scale_color_manual(values = brewer.pal(n=3, name="Set2")) + ggtitle("Excel Concepts v Practice")
+```
+

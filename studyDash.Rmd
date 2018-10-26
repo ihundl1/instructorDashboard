@@ -1,0 +1,128 @@
+---
+title: "Studying Dashboard"
+output: 
+  flexdashboard::flex_dashboard
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(plotly)
+library(shiny)
+
+source('studyDashBackEnd.R')
+```
+
+```{r}
+# create vector for section drop-down list
+sChoice <- c()
+for (s in distinct(study, section) %>% arrange(section)){
+  sChoice[paste("Section", str_sub(s, start = -1))] <- s
+  sChoice["All Sections"] <- "All"
+}
+```
+
+Inputs {.sidebar}
+============================
+```{r}
+selectInput('sectionId', label = NULL, sChoice, selected = "All")
+sliderInput('studyMinutes', "Minutes on Page", 0, 60, 5, step=10)
+```
+
+
+Information Systems {data-icon="fa-globe"}
+=================================
+```{r}
+is <- is %>% filter(topic!= isTopics[1])
+```
+
+Column
+-----------------------
+```{r}
+# graphs
+renderPlot({is %>% studyPlot(m=input$studyMinutes, i=input$sectionId) + dateLimits(c1) + 
+  ggtitle('Syllabus and Organized Computing', subtitle = c1) + 
+  geom_vline(xintercept = as.Date(cs1)) + guides(color="none")
+})
+renderPlot({is %>% studyPlot(m=input$studyMinutes, i=input$sectionId) + dateLimits(c3) + 
+  ggtitle("Hardware Foundations", subtitle = c3) +
+  geom_vline(xintercept = as.Date(cs3)) + guides(color="none")
+})
+renderPlot({is %>% studyPlot(m=input$studyMinutes, i=input$sectionId) + dateLimits(c5) +
+  ggtitle("IS Foundations & Networking Foundations", subtitle = c5) +
+  geom_vline(xintercept = as.Date(cs5)) + guides(color="none")
+})
+```
+
+Column
+-----------------------------
+```{r}
+# more graphs
+renderPlot({is %>% studyPlot(m=input$studyMinutes, i=input$sectionId) + dateLimits(c2) + 
+  ggtitle("Intro to IS & Cybersecurity Foundations", subtitle = c2) +
+  geom_vline(xintercept = as.Date(cs2)) + 
+  theme(axis.title.y = element_blank(), axis.ticks.y = element_blank(), axis.text.y = element_blank())
+})
+renderPlot({is %>% studyPlot(m=input$studyMinutes, i=input$sectionId) + dateLimits(c4) + 
+  ggtitle("Software Foundations", subtitle = c4) +
+  geom_vline(xintercept = as.Date(cs4)) +
+  theme(axis.title.y = element_blank(), axis.ticks.y = element_blank(), axis.text.y = element_blank())
+})
+renderPlot({is %>% studyPlot(m=input$studyMinutes, i=input$sectionId) + dateLimits(c6) +
+  ggtitle("Value Creation & Digital Business Models", subtitle = c6) +
+  geom_vline(xintercept = as.Date(cs6)) +
+  theme(axis.title.y = element_blank(), axis.ticks.y = element_blank(), axis.text.y = element_blank())
+})
+```
+
+
+Excel {data-icon="fa-chart-bar"}
+====================
+```{r}
+excel <- excel %>% filter(topic != excelTopics[1])
+```
+
+Column
+-------------------
+```{r}
+# graphs
+renderPlot({excel %>% studyPlot(m=input$studyMinutes, i=input$sectionId) + ggtitle("Excel Topics")})
+renderPlot({excel %>% studyPlot(m=input$studyMinutes, i=input$sectionId) + 
+    dateLimits(e1) + ggtitle("Exam 1") +
+    geom_vline(xintercept = as.Date(es1)) + guides(color="none")
+})
+```
+
+Column
+--------------------
+```{r}
+# more graphs
+renderPlot({excel %>% vsPlot(m=input$studyMinutes, i=input$sectionId)})
+renderPlot({excel %>% studyPlot(m=input$studyMinutes, i=input$sectionId) + 
+    dateLimits(e2) + ggtitle("Exam 2") +
+    geom_vline(xintercept = as.Date(es2)) +
+    theme(axis.title.y = element_blank(), axis.ticks.y = element_blank(), axis.text.y = element_blank())
+})
+```
+
+
+Word {data-icon="fa-file-alt"}
+=============================
+```{r}
+word <- word %>% filter(topic != wordTopics[1])
+```
+
+Column
+--------------------------
+```{r}
+# graphs
+renderPlot({word %>% studyPlot(m=input$studyMinutes, i=input$sectionId) + ggtitle("Word Topics")})
+```
+
+Column
+--------------------------------------
+```{r}
+# more graphs
+#renderPlot({word %>% vsPlot(i=input$SectionId)})
+```
+
