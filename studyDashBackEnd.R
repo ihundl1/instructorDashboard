@@ -110,4 +110,6 @@ dateLimits <- function(c){
   coord_cartesian(xlim = c(as.Date(int_start(c)), as.Date(int_end(c))))
 }
 
-
+# QUESTIONS!
+# What outbound links are being clicked?
+#   What pages are those links on / what topics are they related to?

@@ -1,0 +1,54 @@
+---
+title: "Q & A"
+author: "Isabella Hundley"
+date: "October 30, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(scales)
+```
+
+## Q&A
+
+There are 'r sum(enrolled$sectionSize)' students enrolled in the in-class sections of ISDS 1102 this semester.
+
+### Submissions
+
+How many students submit assignments per day?
+
+```{r}
+ggplot(dailySubs, aes(x=subDate, y = n)) + geom_col() + theme_minimal()
+```
+
+What percent of students have submitted assignments?
+```{r}
+ggplot(totalSubs, aes(x = label, y = pSub)) + geom_col() + theme_minimal() +
+  scale_y_continuous(name = "", labels = percent) + theme(axis.text.x = element_text(angle=45, hjust=1))
+
+ggplot(fullSubs, aes(x = label, y = pSub)) + geom_col() + facet_wrap(~sectionId) + theme_minimal() + 
+  scale_y_continuous(name = "", labels = percent) + 
+  theme(axis.text.x = element_text(angle=45, hjust=1))
+```
+
+Of the students that have submitted an assignment, what percent submitted multiple times?
+```{r}
+ggplot(totalSubs, aes(x = label, y = pManySubs)) + geom_col() + theme_minimal() +
+  scale_y_continuous(name = "", labels = percent) + theme(axis.text.x = element_text(angle=45, hjust=1))
+
+ggplot(fullSubs, aes(x = label, y = pManySubs)) + geom_col() + facet_wrap(~sectionId) + theme_minimal() +
+  scale_y_continuous(name = "", labels = percent) + 
+  theme(axis.text.x = element_text(angle=45, hjust=1))
+```
+
+How many students have not submitted any files (per chunk)?
+
+```{r}
+
+```
+
+
+
+

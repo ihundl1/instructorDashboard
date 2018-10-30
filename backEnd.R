@@ -24,12 +24,42 @@ ss <- collect(ss)
 enrolled <- group_by(ss, sectionId) %>% summarise(sectionSize = n())
 
 # how many students have submitted each assignment per day?
-subs <- full %>% filter(!is.na(sectionId)) %>% group_by(label, subDate, sectionId) %>% 
-  summarise(submissions = n()) %>% left_join(enrolled, by = 'sectionId')
+dailySubs <- full %>% filter(!is.na(sectionId)) %>% group_by(subDate, sectionId, pawsId) %>% 
+  summarise(submissions = n()) %>% count(subDate, sectionId)
 
-# what percent of students have submitted the assignment?
-subs <- subs %>% mutate(percent = submissions / sectionSize)
+# what percent of students of have submitted assignments? Multiple times?
+subs <- full %>% filter(!is.na(sectionId)) %>% group_by(label, pawsId, sectionId) %>% 
+  summarise(submissions = n()) %>% group_by(label, sectionId) %>% summarise(subStudents = n())
 
+manySubs <- full %>% filter(!is.na(sectionId)) %>% group_by(label, pawsId, sectionId) %>% 
+  summarise(submissions = n()) %>% filter(submissions > 1) %>% group_by(label, sectionId) %>%
+  summarise(manySubStudents = n())
 
+fullSubs <- subs %>% left_join(manySubs, by = c('label', 'sectionId')) %>% 
+  left_join(enrolled, by = "sectionId") %>%
+  mutate(pSub = subStudents/sectionSize, pManySubs = manySubStudents/sectionSize)
+
+totalSubs <- fullSubs %>% group_by(label) %>% 
+  summarise(subStudents = sum(subStudents, na.rm = TRUE), manySubStudents = sum(manySubStudents, na.rm = TRUE), students = sum(sectionSize, na.rm = TRUE)) %>%
+  mutate(pSub = subStudents/students, pManySubs = manySubStudents/students)
+
+# what students have not submitted any files (per chunk)?
+good <- full %>% filter(!is.na(sectionId)) %>% count(label, pawsId, sectionId)
+cNames <- distinct(good, label)
+goodChunks <- c()
+for (g in as.vector(cNames$label)){
+  goodChunks[[g]] <- subset(good, label==g, select=pawsId)
+  goodChunks[[g]] <- goodChunks[[g]][["pawsId"]]
+}
+
+badChunks <- c()
+for (b in as.vector(cNames$label)){
+  badChunks[[b]] <- ss %>% filter(!(pawsId %in% goodChunks[[b]])) %>% select(pawsId)
+  badChunks[[b]] <- badChunks[[b]][["pawsId"]]
+}
+
+# Who is attending class and open lab?
+
+# Who is NOT attending class/open lab or submitting files?
 
 
