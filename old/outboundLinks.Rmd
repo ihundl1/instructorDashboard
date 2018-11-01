@@ -1,6 +1,5 @@
 ---
 title: "Outbound Links Analysis"
-author: "Isabella Hundley"
 date: "October 2, 2018"
 output: html_document
 ---

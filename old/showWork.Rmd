@@ -1,6 +1,5 @@
 ---
 title: "showWork"
-author: "Isabella Hundley"
 date: "September 13, 2018"
 output: html_document
 ---

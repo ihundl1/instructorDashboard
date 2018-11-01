@@ -1,6 +1,5 @@
 ---
 title: "ISDS 1102 Student Studying"
-author: "Isabella Hundley"
 date: "October 2, 2018"
 output: html_document
 ---

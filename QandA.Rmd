@@ -1,6 +1,5 @@
 ---
 title: "Q & A"
-author: "Isabella Hundley"
 date: "October 30, 2018"
 output: html_document
 ---
@@ -9,13 +8,15 @@ output: html_document
 knitr::opts_chunk$set(echo = FALSE)
 
 library(scales)
+library(knitr)
+
+source('backEnd.R')
 ```
 
-## Q&A
 
-There are 'r sum(enrolled$sectionSize)' students enrolled in the in-class sections of ISDS 1102 this semester.
+There are `r sum(enrolled$sectionSize)` students enrolled in the in-class sections of ISDS 1102 this semester.
 
-### Submissions
+#### Submissions
 
 How many students submit assignments per day?
 
@@ -46,9 +47,22 @@ ggplot(fullSubs, aes(x = label, y = pManySubs)) + geom_col() + facet_wrap(~secti
 How many students have not submitted any files (per chunk)?
 
 ```{r}
+table = data.frame(chunk = c('a'), students = c(12), stringsAsFactors = FALSE)
+inc <- 1
+for (name in as.vector(cNames$label)){
+  table[inc, 1] <- name
+  table[inc, 2] <- length(badChunks[[name]])
+  inc <- inc + 1
+}
 
+ggplot(table, aes(x = chunk, y = students)) + geom_col() + theme_minimal() + 
+  theme(axis.text.x = element_text(angle=45, hjust=1))
 ```
 
+Students that have not submitted any files for e1a:
+    `r badChunks$e1a`
 
+
+#### Attendance
 
 
