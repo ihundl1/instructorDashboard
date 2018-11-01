@@ -17,9 +17,11 @@ activity <- left_join(activity, pageTable, by = 'pagePath')
 study <- activity %>% select(instances, userId, pagePath, eventCategory, eventValue:pageCategory) %>%
   filter(date >= currentSemester)
 study <- left_join(study, roster, by = 'userId')
-study <- study %>% select(-lastname, -firstname) %>% collect() %>% 
-  mutate(visMinutes = if_else(eventCategory == 'Page Visibility', eventValue / 60, 0)) %>%
-  mutate(date = as.Date(date))
+study <- study %>% select(-lastname, -firstname) %>% filter(eventCategory == "Page Visibility") %>% 
+  collect() %>% mutate(date = as.Date(date)) %>%
+  group_by(pawsId, pagePath, pageCategory, eventCategory, date, section) %>% summarize(eventValue = sum(eventValue)) %>%
+  mutate(visMinutes = eventValue / 60)
+study <- as.data.frame(study)
 
 # split study table
 studyTopics <- split(study, study$pageCategory)
@@ -76,7 +78,7 @@ word <- word %>% mutate(topic = case_when(
 ## FUNCTIONS!
 # Density plot function
 densePlot <- function(m=5){
-  study %>% filter(eventCategory == "Page Visibility") %>% group_by(instances, section) %>% 
+  study %>% group_by(pawsId, section) %>% 
     summarise(sessionTime = sum(visMinutes)) %>% filter(sessionTime > m) %>%
     ggplot(aes(x = sessionTime)) + geom_density() + facet_wrap(~section)
 }
@@ -86,8 +88,8 @@ studyPlot <- function(table, m=5, i="All"){
   if (i != "All"){
     table <- table %>% filter(section == i)
   }
-  table %>% filter(eventCategory == 'Page Visibility', visMinutes >= m) %>% 
-    distinct(userId, topic, date) %>% count(topic, date) %>%
+  table %>% filter(visMinutes >= m) %>% 
+    distinct(pawsId, topic, date) %>% count(topic, date) %>%
     ggplot(aes(x = date, y = n, color = topic)) + geom_line() +
     theme_minimal() + labs(x = "Date", y = "Students") +
     scale_color_manual(values = brewer.pal(n = 8, name = "Set1"))
@@ -98,8 +100,8 @@ vsPlot <- function(table, m=5, i="All"){
   if (i != "All"){
     table <- table %>% filter(section == i)
   }
-  table %>% filter(subtopic != "Other") %>% filter(eventCategory == "Page Visibility", visMinutes >= m) %>%
-    distinct(userId, subtopic, date) %>% count(subtopic, date) %>%
+  table %>% filter(subtopic != "Other") %>% filter(visMinutes >= m) %>%
+    distinct(pawsId, subtopic, date) %>% count(subtopic, date) %>%
     ggplot(aes(x = date, y = n, color = subtopic)) + geom_line() +
     theme_minimal() + labs(x = "Date", y = "Students") +
     scale_color_manual(values = brewer.pal(n=3, name="Set2")) + ggtitle("Concepts vs. Practice")
@@ -109,7 +111,3 @@ vsPlot <- function(table, m=5, i="All"){
 dateLimits <- function(c){
   coord_cartesian(xlim = c(as.Date(int_start(c)), as.Date(int_end(c))))
 }
-
-# QUESTIONS!
-# What outbound links are being clicked?
-#   What pages are those links on / what topics are they related to?

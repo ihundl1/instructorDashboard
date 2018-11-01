@@ -62,4 +62,7 @@ for (b in as.vector(cNames$label)){
 
 # Who is NOT attending class/open lab or submitting files?
 
+# What outbound links are being clicked?
+#   What pages are those links on / what topics are they related to?
+
 
