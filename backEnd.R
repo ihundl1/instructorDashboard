@@ -65,4 +65,10 @@ for (b in as.vector(cNames$label)){
 # What outbound links are being clicked?
 #   What pages are those links on / what topics are they related to?
 
-
+# 11/2
+# comparison chart
+# consolidate submissions?
+# attendance + submissions
+# wants more individualized data
+## look up by pawsid?
+## everything about that student
