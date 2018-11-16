@@ -7,6 +7,8 @@ exercises <- tbl(conDatasource, 'exsubmission')
 eDetails <- tbl(conDatasource, 'exchunk')
 students <- tbl(conDatasource, 'student_user')
 sections <- tbl(conDatasource, 'section')
+attendance <- tbl(conDatasource, 'attendance')
+classes <- tbl(conDatasource, 'attevent')
 
 # filter data from previous semesters
 exercises <- exercises %>% filter(subTime > currentSemester)
@@ -58,12 +60,15 @@ for (b in as.vector(cNames$label)){
   badChunks[[b]] <- badChunks[[b]][["pawsId"]]
 }
 
+# Who is attending class?
+attTable <- left_join(attendance, classes, by = c('att_event' = 'eventId')) %>% 
+  collect() %>% left_join(ss, by = 'pawsId') %>% filter(!is.na(sectionId)) %>% 
+  count(sectionId, eventDate, eventTopic) %>% mutate(eventDate = as.Date(eventDate))
+
 # Who is attending class and open lab?
 
 # Who is NOT attending class/open lab or submitting files?
 
-# What outbound links are being clicked?
-#   What pages are those links on / what topics are they related to?
 
 # 11/2
 # comparison chart

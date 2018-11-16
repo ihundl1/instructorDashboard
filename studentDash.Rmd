@@ -1,0 +1,34 @@
+---
+title: "studentDash"
+output: flexdashboard::flex_dashboard
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(plotly)
+library(shiny)
+
+source('studentBackEnd.R')
+```
+
+Inputs {.sidebar}
+------------------------------
+```{r}
+# inputs
+textInput('paws', "Enter a paws ID", placeholder = "mtiger1")
+```
+
+```{r}
+# work
+info <- reactive(filter(big, pawsId == input$paws) %>% collect())
+```
+
+
+Row
+------------------------------
+```{r}
+
+```
+
+

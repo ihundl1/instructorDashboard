@@ -31,49 +31,13 @@ is <- studyTopics$is
 
 ## TOPICS!
 # Information Systems
-isTopics <- c("Home", "Introduction", "Cybersecurity", "Hardware", "Software", "Networking", 
-              "IS Foundations", "Value Creation", "Business Models")
-is <- is %>% mutate(topic = case_when(
-  grepl('intro', pagePath) ~ isTopics[2],
-  grepl('cyber', pagePath) ~ isTopics[3],
-  grepl('hard', pagePath) ~ isTopics[4],
-  grepl('soft', pagePath) ~ isTopics[5],
-  grepl('net', pagePath) ~ isTopics[6],
-  grepl('info', pagePath) ~ isTopics[7],
-  grepl('val', pagePath) ~ isTopics[8],
-  grepl('ecom', pagePath) ~ isTopics[9],
-  TRUE ~ isTopics[1]
-))
+is <- assignTopic(is)
 
 # Excel
-excelTopics <- c("Home", "Formatting", "Functions", "Worksheet Mgt", "Sort & Filter", 
-                 "Pivot Tables", "Comprehensive Analysis")
-excel <- excel %>% mutate(topic = case_when(
-  grepl('analysis', pagePath) ~ excelTopics[7],
-  grepl('pivot', pagePath) ~ excelTopics[6],
-  grepl('sort', pagePath) ~ excelTopics[5],
-  grepl('management', pagePath)~ excelTopics[4],
-  grepl('functions', pagePath) ~ excelTopics[3],
-  grepl('format', pagePath) ~ excelTopics[2],
-  TRUE ~ excelTopics[1]
-)) %>% mutate(subtopic = case_when(
-  grepl('concepts', pagePath) ~ "Concepts",
-  grepl('practice', pagePath) ~ "Practice",
-  TRUE ~ "Other"
-))
+excel <- assignTopic(excel)
 
 # Word
-wordTopics <- c("Home", "Simple Document", "Template", "Complex Document")
-word <- word %>% mutate(topic = case_when(
-  grepl('simple', pagePath) ~ wordTopics[2],
-  grepl('template', pagePath) ~ wordTopics[3],
-  grepl('complex', pagePath) ~ wordTopics[4],
-  TRUE ~ wordTopics[1]
-)) %>% mutate(subtopic = case_when(
-  grepl('concepts', pagePath) ~ "Concepts",
-  grepl('practice', pagePath) ~ "Practice",
-  TRUE ~ "Other"
-))
+word <- assignTopic(word)
 
 ## FUNCTIONS!
 # Density plot function

@@ -1,16 +1,16 @@
 ---
 title: "Q & A"
-date: "October 30, 2018"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
 
 library(scales)
 library(knitr)
 
 source('backEnd.R')
+source('links.R')
 ```
 
 
@@ -64,5 +64,37 @@ Students that have not submitted any files for e1a:
 
 
 #### Attendance
+```{r}
+attTable %>% ggplot(aes(x = eventDate, y = n)) + geom_col(aes(fill = eventTopic), position = 'dodge') +
+  facet_wrap(~sectionId)
+```
+
+
+### Links
+
+What students have clicked the links on the syllabus page?
+`r kable(syllabusLinks)`
+
+What pages are students clicking links from?
+```{r}
+topicLinks %>% filter(pageCategory == 'is') %>% group_by(date, topic) %>% 
+  summarise(clicks = sum(clicks)) %>%
+  ggplot(aes(x = date, y = clicks, color = topic)) + geom_line() + theme_minimal() +
+  ggtitle('Information Systems', subtitle = 'Outbound Link Clicks by Date & Topic')
+```
+
+```{r}
+topicLinks %>% filter(pageCategory == 'excel') %>% group_by(date, topic) %>% 
+  summarise(clicks = sum(clicks)) %>%
+  ggplot(aes(x = date, y = clicks, color = topic)) + geom_line() + theme_minimal() +
+  ggtitle('Excel', subtitle = 'Outbound Link Clicks by Date & Topic')
+```
+
+```{r}
+topicLinks %>% filter(pageCategory == 'word') %>% group_by(date, topic) %>% 
+  summarise(clicks = sum(clicks)) %>%
+  ggplot(aes(x = date, y = clicks, color = topic)) + geom_line() + theme_minimal() +
+  ggtitle('Word', subtitle = 'Outbound Link Clicks by Date & Topic')
+```
 
 
