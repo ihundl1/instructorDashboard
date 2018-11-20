@@ -17,4 +17,9 @@ big <- big %>% select(pawsId:section, instructor, delivery, att_event:eventTopic
 
 students <- distinct(roster, pawsId) %>% collect()
 
-
+nameTable <- distinct(roster, pawsId, lastname, firstname) %>% collect()
+nameList <- c()
+for (row in 1:nrow(nameTable)) {
+  index <- paste0(nameTable[row, 'lastname'], ', ', nameTable[row, 'firstname'])
+  nameList[index] <- as.character(nameTable[row, "pawsId"])
+}

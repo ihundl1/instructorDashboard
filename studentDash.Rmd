@@ -16,19 +16,19 @@ Inputs {.sidebar}
 ------------------------------
 ```{r}
 # inputs
-textInput('paws', "Enter a paws ID", placeholder = "mtiger1")
+radioButtons("student", "Select a Student", nameList)
 ```
 
 ```{r}
 # work
-info <- reactive(filter(big, pawsId == input$paws) %>% collect())
+info <- reactive()
 ```
 
 
 Row
 ------------------------------
 ```{r}
-
+#renderTable(head(info()))
 ```
 
 
