@@ -21,14 +21,37 @@ radioButtons("student", "Select a Student", nameList)
 
 ```{r}
 # work
-info <- reactive()
+mLecture <- reactive(as.character(big %>% filter(pawsId == input$student) %>% 
+                                    filter(eventTopic == 'lecture') %>% select(missed)))
+mPractice <- reactive(as.character(big %>% filter(pawsId == input$student) %>% 
+                                    filter(eventTopic == 'practice') %>% select(missed)))
+pLecture <- reactive(as.double(big %>% filter(pawsId == input$student) %>% 
+                                    filter(eventTopic == 'lecture') %>% select(attPerc)))
+pPractice <- reactive(as.double(big %>% filter(pawsId == input$student) %>% 
+                                    filter(eventTopic == 'practice') %>% select(attPerc)))
 ```
 
 
 Row
 ------------------------------
+
+### Lectures Missed
 ```{r}
-#renderTable(head(info()))
+renderValueBox({valueBox(
+  (ifelse(mLecture() == "integer(0)", "All", mLecture())), color = ifelse(
+    mLecture() == "integer(0)", "danger", ifelse(
+      pLecture() > .5, "primary", ifelse(
+        pLecture() < .25, "danger", "warning"))))
+  })
 ```
 
+### Practices Missed
+```{r}
+renderValueBox({valueBox(
+  (ifelse(mPractice() == "integer(0)", "All", mPractice())), color = ifelse(
+    mPractice() == "integer(0)", "danger", ifelse(
+      pPractice() > .5, "primary", ifelse(
+        pPractice() < .25, "danger", "warning"))))
+  })
+```
 
