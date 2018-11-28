@@ -1,6 +1,8 @@
 ---
 title: "studentDash"
-output: flexdashboard::flex_dashboard
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
 runtime: shiny
 ---
 
@@ -20,7 +22,7 @@ radioButtons("student", "Select a Student", nameList)
 ```
 
 ```{r}
-# work
+# Attendance Variables
 mLecture <- reactive(as.character(big %>% filter(pawsId == input$student) %>% 
                                     filter(eventTopic == 'lecture') %>% select(missed)))
 mPractice <- reactive(as.character(big %>% filter(pawsId == input$student) %>% 
@@ -29,10 +31,13 @@ pLecture <- reactive(as.double(big %>% filter(pawsId == input$student) %>%
                                     filter(eventTopic == 'lecture') %>% select(attPerc)))
 pPractice <- reactive(as.double(big %>% filter(pawsId == input$student) %>% 
                                     filter(eventTopic == 'practice') %>% select(attPerc)))
+
+# Submissions Table
+studentSubs <- reactive(filter(subs, pawsId == input$student) %>% select(label, submissions, bestScore))
 ```
 
 
-Row
+Attendance
 ------------------------------
 
 ### Lectures Missed
@@ -53,5 +58,21 @@ renderValueBox({valueBox(
       pPractice() > .5, "primary", ifelse(
         pPractice() < .25, "danger", "warning"))))
   })
+```
+
+
+Submissions
+-------------------------------
+
+### Assignments Submitted
+```{r}
+renderTable({studentSubs()}, bordered = TRUE, striped = TRUE, digits = 0)
+```
+
+### Assignments Skipped
+```{r}
+renderTable({
+  filter(assignments, !(chunkId %in% studentSubs()$label)) %>% select(chunkId, subTopic)
+}, bordered = TRUE, striped = TRUE)
 ```
 

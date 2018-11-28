@@ -5,10 +5,12 @@ source('constants.R')
 
 # import data
 roster <- tbl(conDatasource, 'student_user')
-activity <- tbl(conDatasource, 'activity')
+# activity <- tbl(conDatasource, 'activity')
 attendance <- tbl(conDatasource, 'attendance')
 classes <- tbl(conDatasource, 'attevent')
 section <- tbl(conDatasource, 'section')
+chunk <- tbl(conDatasource, 'exchunk')
+submission <- tbl(conDatasource, 'exsubmission')
 
 nameTable <- left_join(roster, section, by = c('section' = 'sectionId')) %>% 
   filter(delivery == "inclass") %>% distinct(pawsId, lastname, firstname) %>% arrange(lastname) %>% 
@@ -29,3 +31,11 @@ big <- section %>% filter(delivery == "inclass") %>% select(sectionId, instructo
   left_join(roster, by = c('sectionId' = 'section')) %>% collect() %>% 
   left_join(attend, by = 'pawsId') %>% left_join(course, by = c('sectionId', 'eventTopic')) %>%
   mutate(attPerc = att / classTotal) %>% mutate(missed = classTotal - att)
+
+subs <- submission %>% filter(pawsId != "") %>% left_join(chunk, by = c('label' = 'chunkId')) %>% 
+  group_by(pawsId, label, mainTopic, subTopic) %>% 
+  summarise(submissions = n(), bestScore = max(totalscore, na.rm = TRUE)) %>% collect() %>% 
+  as.data.frame()
+
+assignments <- chunk %>% collect()
+
