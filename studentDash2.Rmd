@@ -1,5 +1,5 @@
 ---
-title: "Student Dashoard"
+title: "Student Dashboard 2"
 output: 
   flexdashboard::flex_dashboard:
     orientation: rows
@@ -10,6 +10,7 @@ runtime: shiny
 library(flexdashboard)
 library(plotly)
 library(shiny)
+library(RColorBrewer)
 
 source('studentBackEnd.R')
 ```
@@ -66,13 +67,23 @@ Submissions
 
 ### Assignments Submitted
 ```{r}
-renderTable({studentSubs()}, bordered = TRUE, striped = TRUE, digits = 0)
+renderPlot({
+  ggplot(studentSubs(), aes(x = label, y = bestScore)) + geom_col() + 
+    theme_minimal()
+})
 ```
 
-### Assignments Skipped
+
+Skips
+------------------------------
+
+### Assignments with No Submissions
 ```{r}
-renderTable({
-  filter(assignments, !(chunkId %in% studentSubs()$label)) %>% select(chunkId, subTopic)
-}, bordered = TRUE, striped = TRUE)
+renderPlot({
+  filter(assignments, !(chunkId %in% studentSubs()$label)) %>% arrange(chunkId) %>%
+    ggplot(aes(x = st2, fill = mainTopic)) + geom_bar() + xlab("Topic") + 
+    ylab("Assignments Skipped") + theme_minimal() + 
+    scale_fill_manual(values = brewer.pal(3, "Accent"))
+})
 ```
 

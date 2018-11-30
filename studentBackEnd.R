@@ -39,3 +39,7 @@ subs <- submission %>% filter(pawsId != "") %>% left_join(chunk, by = c('label' 
 
 assignments <- chunk %>% collect()
 
+levels <- distinct(assignments, subTopic)
+levels <- as.vector(levels$subTopic)
+assignments$st2 <- factor(assignments$subTopic, levels = levels)
+
