@@ -2,7 +2,8 @@ library(lubridate)
 
 ## CONSTANTS!
 # first day of the current semester
-currentSemester <-  as.Date("2018-08-20")
+currentSemester <-  "2018-08-20"
+inClass <- c('2018FA3', '2018FA4', '2018FA5', '2018FA6')
 
 # Checkup dates (~2 week intervals with the end date being the last day of testing)
 c1 <- interval('2018-08-24', '2018-09-07')
@@ -36,6 +37,11 @@ excelTopics <- c("Home", "Formatting", "Functions", "Worksheet Mgt", "Sort & Fil
                  "Pivot Tables", "Comprehensive Analysis")
 wordTopics <- c("Home", "Simple Document", "Template", "Complex Document")
 
+exam1chunks <- c('e1a', 'e1b', 'e1c', 'e1d', 'e2a', 'e2b', 'e2c', 'e2d', 'e2e', 'e3a', 'e3b', 'e3c', 
+                 'e3d')
+exam2chunks <- c('e4a', 'e4b', 'e4c', 'e4d', 'e4e', 'e5a', 'e5b', 'e5c', 'e5d', 'e5e', 'e6a', 'e6b', 
+                 'e6c', 'e6d', 'e6e')
+exam3chunks <- c('w1a', 'w1b', 'w1c', 'w1d', 'w2a', 'w2b', 'w2c', 'w2d', 'w3a', 'w3b', 'w3c')
 
 assignTopic <- function(df) {
  df %>% mutate(topic = case_when(
