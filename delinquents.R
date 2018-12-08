@@ -4,7 +4,7 @@ source('connection.R')
 source('constants.R ')
 # Choose an exam!
 # 1 = exam 1, 2 = exam 2, 3 = exam 3
-exam <- 3
+exam <- 1
 
 if (exam == 1) {
   startDate <- currentSemester

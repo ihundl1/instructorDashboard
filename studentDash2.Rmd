@@ -15,12 +15,47 @@ library(RColorBrewer)
 source('studentBackEnd.R')
 ```
 
+
 Inputs {.sidebar}
-------------------------------
+===================================
 ```{r}
-# inputs
+# Semester
+#selectInput("semester", "Select a Semester", semList)
+
+# Section
+#reactive({
+#  secs <- filter(semSec, semester == input$semester) %>% select(sectionId, sectionName)
+#  secList <- setNames(unique(secs$sectionId), unique(secs$sectionName))
+#  selectInput("section", "Select a Section", secList)
+#})
+
+# Student
+nameList <- c()
+for (row in 1:nrow(nameTable)) {
+  index <- paste0(nameTable[row, 'lastname'], ', ', nameTable[row, 'firstname'])
+  nameList[index] <- as.character(nameTable[row, "pawsId"])
+}
 radioButtons("student", "Select a Student", nameList)
 ```
+
+
+Theory
+====================================
+
+Pageviews + Time
+---------------------------
+```{r}
+renderPlot({
+  theory2 %>% filter(pawsId == input$student) %>%
+    ggplot(aes(x = topic, y = pgViews, fill = minutes)) + geom_col() + theme_minimal() +
+    ylab("Pageviews") + xlab("Information Systems Topics") + ggtitle("Information Systems Studying") + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+})
+```
+
+
+Practice
+================================
 
 ```{r}
 # Attendance Variables
@@ -36,7 +71,6 @@ pPractice <- reactive(as.double(big %>% filter(pawsId == input$student) %>%
 # Submissions Table
 studentSubs <- reactive(filter(subs, pawsId == input$student) %>% select(label, submissions, bestScore))
 ```
-
 
 Attendance
 ------------------------------
@@ -61,18 +95,16 @@ renderValueBox({valueBox(
   })
 ```
 
-
 Submissions
 -------------------------------
 
 ### Assignments Submitted
 ```{r}
 renderPlot({
-  ggplot(studentSubs(), aes(x = label, y = bestScore)) + geom_col() + 
-    theme_minimal()
+  ggplot(studentSubs(), aes(x = label, y = bestScore, label = submissions, fill = bestScore)) +
+    geom_col() + geom_text(vjust = 0) + theme_minimal()
 })
 ```
-
 
 Skips
 ------------------------------
