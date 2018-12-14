@@ -19,23 +19,39 @@ source('studentBackEnd.R')
 Inputs {.sidebar}
 ===================================
 ```{r}
-# Semester
-#selectInput("semester", "Select a Semester", semList)
+# Section / Student Dropdown Selection
+selectInput("student1", "Section 1", sec1, selected = "NA")
+selectInput("student2", "Section 2", sec2, selected = "NA")
+selectInput("student3", "Section 3", sec3, selected = "NA")
+selectInput("student4", "Section 4", sec4, selected = "NA")
+selectInput("student5", "Section 5", sec5, selected = "NA")
+selectInput("student6", "Section 6", sec6, selected = "NA")
+selectInput("student8", "Section 8", sec8, selected = "NA")
 
-# Section
-#reactive({
-#  secs <- filter(semSec, semester == input$semester) %>% select(sectionId, sectionName)
-#  secList <- setNames(unique(secs$sectionId), unique(secs$sectionName))
-#  selectInput("section", "Select a Section", secList)
-#})
-
-# Student
-nameList <- c()
-for (row in 1:nrow(nameTable)) {
-  index <- paste0(nameTable[row, 'lastname'], ', ', nameTable[row, 'firstname'])
-  nameList[index] <- as.character(nameTable[row, "pawsId"])
-}
-radioButtons("student", "Select a Student", nameList)
+# Big IF
+studentID <- reactive({
+  if (input$student1 != "NA"){
+    input$student1
+  }
+  else if (input$student2 != "NA"){
+    input$student2
+  }
+  else if (input$student3 != "NA"){
+    input$student3
+  }
+  else if (input$student4 != "NA"){
+    input$student4
+  }
+  else if (input$student5 != "NA"){
+    input$student5
+  }
+  else if (input$student6 != "NA"){
+    input$student6
+  }
+  else {
+    input$student8
+  }
+})
 ```
 
 
@@ -45,12 +61,9 @@ Theory
 Pageviews + Time
 ---------------------------
 ```{r}
-renderPlot({
-  theory2 %>% filter(pawsId == input$student) %>%
-    ggplot(aes(x = topic, y = pgViews, fill = minutes)) + geom_col() + theme_minimal() +
-    ylab("Pageviews") + xlab("Information Systems Topics") + ggtitle("Information Systems Studying") + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-})
+renderTable({
+  theory2 %>% filter(pawsId == studentID())
+}, bordered = TRUE, striped = TRUE)
 ```
 
 
@@ -59,23 +72,23 @@ Practice
 
 ```{r}
 # Attendance Variables
-mLecture <- reactive(as.character(big %>% filter(pawsId == input$student) %>% 
+mLecture <- reactive(as.character(big %>% filter(pawsId == studentID()) %>% 
                                     filter(eventTopic == 'lecture') %>% select(missed)))
-mPractice <- reactive(as.character(big %>% filter(pawsId == input$student) %>% 
+mPractice <- reactive(as.character(big %>% filter(pawsId == studentID()) %>% 
                                     filter(eventTopic == 'practice') %>% select(missed)))
-pLecture <- reactive(as.double(big %>% filter(pawsId == input$student) %>% 
+pLecture <- reactive(as.double(big %>% filter(pawsId == studentID()) %>% 
                                     filter(eventTopic == 'lecture') %>% select(attPerc)))
-pPractice <- reactive(as.double(big %>% filter(pawsId == input$student) %>% 
+pPractice <- reactive(as.double(big %>% filter(pawsId == studentID()) %>% 
                                     filter(eventTopic == 'practice') %>% select(attPerc)))
 
 # Submissions Table
-studentSubs <- reactive(filter(subs, pawsId == input$student) %>% select(label, submissions, bestScore))
+studentSubs <- reactive(filter(subs, pawsId == studentID()) %>% select(label, submissions, bestScore))
 ```
 
 Attendance
 ------------------------------
 
-### Lectures Missed
+### Lectures Missed of `r lecTotal$classTotal[1]`
 ```{r}
 renderValueBox({valueBox(
   (ifelse(mLecture() == "integer(0)", "All", mLecture())), color = ifelse(
@@ -85,7 +98,7 @@ renderValueBox({valueBox(
   })
 ```
 
-### Practices Missed
+### Practices Missed of `r pracTotal$classTotal[1]`
 ```{r}
 renderValueBox({valueBox(
   (ifelse(mPractice() == "integer(0)", "All", mPractice())), color = ifelse(
@@ -101,8 +114,10 @@ Submissions
 ### Assignments Submitted
 ```{r}
 renderPlot({
-  ggplot(studentSubs(), aes(x = label, y = bestScore, label = submissions, fill = bestScore)) +
-    geom_col() + geom_text(vjust = 0) + theme_minimal()
+  ggplot(studentSubs(), aes(x = label, y = bestScore)) +
+    geom_col(fill = "cadetblue2") + 
+    geom_text(aes(label = submissions), position = position_stack(vjust = .5), size = 10) + 
+    theme_minimal() + ylab("Best Score") + xlab("Chunk")
 })
 ```
 
