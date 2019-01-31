@@ -19,6 +19,8 @@ source('studentBackEnd.R')
 Inputs {.sidebar}
 ===================================
 ```{r}
+renderText("Only one student's information will display at a time, so please return the selection to 'Select a Student' before you select a student from another section.")
+
 # Section / Student Dropdown Selection
 selectInput("student1", "Section 1", sec1, selected = "NA")
 selectInput("student2", "Section 2", sec2, selected = "NA")
@@ -61,9 +63,9 @@ Theory
 Pageviews + Time
 ---------------------------
 ```{r}
-renderTable({
-  theory2 %>% filter(pawsId == studentID())
-}, bordered = TRUE, striped = TRUE)
+#renderTable({
+#  theory2 %>% filter(pawsId == studentID())
+#}, bordered = TRUE, striped = TRUE)
 ```
 
 
@@ -115,7 +117,7 @@ Submissions
 ```{r}
 renderPlot({
   ggplot(studentSubs(), aes(x = label, y = bestScore)) +
-    geom_col(fill = "cadetblue2") + 
+    geom_col(fill = "#FF9999") + 
     geom_text(aes(label = submissions), position = position_stack(vjust = .5), size = 10) + 
     theme_minimal() + ylab("Best Score") + xlab("Chunk")
 })
@@ -129,7 +131,7 @@ Skips
 renderPlot({
   filter(assignments, !(chunkId %in% studentSubs()$label)) %>% arrange(chunkId) %>%
     ggplot(aes(x = st2, fill = mainTopic)) + geom_bar() + xlab("Topic") + 
-    ylab("Assignments Skipped") + theme_minimal() + 
+    ylab("Assignments Left") + theme_minimal() + 
     scale_fill_manual(values = brewer.pal(3, "Accent"))
 })
 ```

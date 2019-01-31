@@ -66,17 +66,17 @@ assignments$st2 <- factor(assignments$subTopic, levels = levels)
 
 
 # Theory
-theory <- activity %>% filter(userId != "") %>% filter(hitType == "pageview" | eventCategory == "Page Visibility") %>% 
-  right_join(roster, by = "userId") %>% select(pawsId, pagePath, hitType, eventCategory, eventValue) %>%
-  left_join(pages, by = "pagePath") %>% filter(pageCategory == "is" & pagePath != '/is/') %>% collect()
-theory <- theory %>% mutate(topic = substr(pagePath, 5, nchar(pagePath))) %>% 
-  mutate(topic = gsub("-", " ", topic))
-pageviews <- theory %>% filter(hitType == "pageview") %>% group_by(pawsId, topic) %>% 
-  summarize(pgViews = n())
-timeviews <- theory %>% filter(eventCategory == "Page Visibility") %>% group_by(pawsId, topic) %>%
-  summarise(seconds = sum(eventValue, na.rm = TRUE))
-theory2 <- left_join(pageviews, timeviews, by = c("pawsId", "topic")) %>% 
-  mutate(minutes = seconds/60, hours = minutes/60)
+#theory <- activity %>% filter(userId != "") %>% filter(hitType == "pageview" | eventCategory == "Page Visibility") %>% 
+#  right_join(roster, by = "userId") %>% select(pawsId, pagePath, hitType, eventCategory, eventValue) %>%
+#  left_join(pages, by = "pagePath") %>% filter(pageCategory == "is" & pagePath != '/is/') %>% collect()
+#theory <- theory %>% mutate(topic = substr(pagePath, 5, nchar(pagePath))) %>% 
+#  mutate(topic = gsub("-", " ", topic))
+#pageviews <- theory %>% filter(hitType == "pageview") %>% group_by(pawsId, topic) %>% 
+#  summarize(pgViews = n())
+#timeviews <- theory %>% filter(eventCategory == "Page Visibility") %>% group_by(pawsId, topic) %>%
+#  summarise(seconds = sum(eventValue, na.rm = TRUE))
+#theory2 <- left_join(pageviews, timeviews, by = c("pawsId", "topic")) %>% 
+#  mutate(minutes = seconds/60, hours = minutes/60)
 
 
 
